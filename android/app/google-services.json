@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "52500710013",
+    "project_id": "winterdienstprofi331166-b2bd4",
+    "storage_bucket": "winterdienstprofi331166-b2bd4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:52500710013:android:3dd306bebcd2e31da8e714",
+        "android_client_info": {
+          "package_name": "de.kommerziell.winterdienstprofi.winterdienst_profi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCI5yNTv_falz7NHGqyfptEDCpuppT-DMQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
