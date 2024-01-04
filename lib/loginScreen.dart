@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'kartenScreen.dart';
+import 'main.dart';
 import 'registerScreen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -21,7 +22,9 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       print("Logged in: ${userCredential.user}");
       // Navigieren zum Kartenscreen oder weiteren Screen nach dem Login
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) => KartenScreen()));
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => MainScreen(),
+      ));
 
       // Zeige Snackbar für erfolgreichen Login
       ScaffoldMessenger.of(context).showSnackBar(
