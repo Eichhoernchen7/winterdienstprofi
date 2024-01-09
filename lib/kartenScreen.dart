@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
-import 'package:winterdienst_profi/wetterScreen.dart';
 
 class KartenScreen extends StatefulWidget {
   @override
@@ -9,7 +8,6 @@ class KartenScreen extends StatefulWidget {
 }
 
 class _KartenScreenState extends State<KartenScreen> {
-  int _currentIndex = 0; // Aktueller Index für die BottomNavigationBar
   late GoogleMapController mapController;
   Location location = new Location();
   Marker? traktorMarker;
@@ -52,16 +50,6 @@ class _KartenScreenState extends State<KartenScreen> {
         ),
       );
     });
-  }
-
-  void _onItemTapped(int index) {
-    if (index == 2) { // Index 2 steht für das Wetter-Icon
-      Navigator.push(context, MaterialPageRoute(builder: (context) => WetterScreen()));
-    } else {
-      setState(() {
-        _currentIndex = index;
-      });
-    }
   }
 
   @override
