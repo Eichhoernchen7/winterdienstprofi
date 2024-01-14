@@ -3,13 +3,15 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 class KartenScreen extends StatefulWidget {
+  const KartenScreen({super.key});
+
   @override
-  _KartenScreenState createState() => _KartenScreenState();
+  KartenScreenState createState() => KartenScreenState();
 }
 
-class _KartenScreenState extends State<KartenScreen> {
+class KartenScreenState extends State<KartenScreen> {
   late GoogleMapController mapController;
-  Location location = new Location();
+  Location location = Location();
   Marker? traktorMarker;
 
   @override
@@ -19,14 +21,12 @@ class _KartenScreenState extends State<KartenScreen> {
   }
 
   void _createMarkerImageFromAsset(BuildContext context) async {
-    final ImageConfiguration imageConfiguration =
-    createLocalImageConfiguration(context);
   }
   // Methode zum Vorladen eines Kartenbereichs
   void preloadMapArea() {
     final LatLngBounds preloadBounds = LatLngBounds(
-      southwest: LatLng(47.220835,5.318406), // Südwest-Ecke
-      northeast: LatLng(55.013680,16.591112), // Nordost-Ecke
+      southwest: const LatLng(47.220835,5.318406), // Südwest-Ecke
+      northeast: const LatLng(55.013680,16.591112), // Nordost-Ecke
     );
     mapController.moveCamera(CameraUpdate.newLatLngBounds(preloadBounds, 50));
   }
@@ -56,8 +56,8 @@ class _KartenScreenState extends State<KartenScreen> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.black,
-      child: new Container(
-        decoration: BoxDecoration(
+      child: Container(
+        decoration: const BoxDecoration(
         color: Colors.black, // Hintergrundfarbe des Containers
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(20),
@@ -65,7 +65,7 @@ class _KartenScreenState extends State<KartenScreen> {
         ),
        ),
       child: ClipRRect(
-      borderRadius: BorderRadius.only(
+      borderRadius: const BorderRadius.only(
       bottomLeft: Radius.circular(20),
       bottomRight: Radius.circular(20),
       ),

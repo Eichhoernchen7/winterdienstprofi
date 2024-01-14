@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'kartenScreen.dart';
-import 'main.dart';
-import 'registerScreen.dart';
+import '../maps/karten_screen.dart';
+import '../main.dart';
+import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override

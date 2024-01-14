@@ -1,15 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:winterdienst_profi/kartenScreen.dart';
-import 'package:winterdienst_profi/loginScreen.dart';
-import 'package:winterdienst_profi/main.dart';
+import 'package:winterdienst_profi/maps/karten_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
   @override
-  _RegisterScreenState createState() => _RegisterScreenState();
+  RegisterScreenState createState() => RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -63,73 +64,97 @@ class _RegisterScreenState extends State<RegisterScreen> {
       // Zeige Fehlermeldungen oder handle den Fehler
       return;
     }
+
+    final registrationSuccess = await _attemptRegistration();
+    if (registrationSuccess) {
+      _showRegistrationSuccess();
+      _navigateToCardScreen();
+    } else {
+      _showRegistrationError();
+    }
+  }
+
+  Future<bool> _attemptRegistration() async {
     try {
       final userCredential = await _auth.createUserWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
-      print("Registered: ${userCredential.user}");
-
-      // Zeige Toast-Benachrichtigung für erfolgreiche Registrierung
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Registrierung erfolgreich!'),
-          duration: Duration(seconds: 3),
-        ),
-      );
-      // zum Kartenscreen navigieren
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) => KartenScreen()));
+      if (kDebugMode) {
+        print("Registered: ${userCredential.user}");
+      }
+      return true;
     } catch (e) {
-      print(e); // Fehlerbehandlung
-      // Optional: Zeige Toast-Benachrichtigung für einen Fehler
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Fehler bei der Registrierung.'),
-          duration: Duration(seconds: 3),
-        ),
-      );
+      if (kDebugMode) {
+        print(e);
+      }
+      return false;
     }
   }
+
+  void _showRegistrationSuccess() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Registrierung erfolgreich!'),
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
+  void _showRegistrationError() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Fehler bei der Registrierung.'),
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
+  void _navigateToCardScreen() {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const KartenScreen()));
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Registrieren')),
+      appBar: AppBar(title: const Text('Registrieren')),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(labelText: 'Email'),
               keyboardType: TextInputType.emailAddress,
               onChanged: (value) => _updateEmailValidation(),
             ),
-            Text(_emailValidationMessage, style: TextStyle(color: Colors.red)),
+            Text(_emailValidationMessage, style: const TextStyle(color: Colors.red)),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
+              decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
               onChanged: (value) => _updatePasswordValidations(),
             ),
-            Text(_passwordLengthMessage, style: TextStyle(color: Colors.red)),
-            Text(_passwordNumberMessage, style: TextStyle(color: Colors.red)),
-            Text(_passwordSpecialCharMessage, style: TextStyle(color: Colors.red)),
-            Text(_passwordUppercaseMessage, style: TextStyle(color: Colors.red)),
+            Text(_passwordLengthMessage, style: const TextStyle(color: Colors.red)),
+            Text(_passwordNumberMessage, style: const TextStyle(color: Colors.red)),
+            Text(_passwordSpecialCharMessage, style: const TextStyle(color: Colors.red)),
+            Text(_passwordUppercaseMessage, style: const TextStyle(color: Colors.red)),
             TextField(
               controller: _confirmPasswordController,
-              decoration: InputDecoration(labelText: 'Passwort wiederholen'),
+              decoration: const InputDecoration(labelText: 'Passwort wiederholen'),
               obscureText: true,
               onChanged: (value) => _updateConfirmPasswordValidation(),
             ),
-            Text(_confirmPasswordValidationMessage, style: TextStyle(color: Colors.red)),
+            Text(_confirmPasswordValidationMessage, style: const TextStyle(color: Colors.red)),
             ElevatedButton(
               onPressed: _register,
-              child: Text('Registrieren'),
               style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all<Color>(Colors.blue),
               ),
+              child: const Text('Registrieren'),
             ),
           ],
         ),

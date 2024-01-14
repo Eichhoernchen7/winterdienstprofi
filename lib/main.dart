@@ -3,8 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'firebase_options.dart';
 import 'intro_screen.dart';
-import 'kartenScreen.dart'; // Importieren Sie Ihre KartenScreen-Klasse
-import 'wetterScreen.dart'; // Importieren Sie Ihre WetterScreen-Klasse
+import 'maps/karten_screen.dart'; // Importieren Sie Ihre KartenScreen-Klasse
+import 'weather/wetter_screen.dart'; // Importieren Sie Ihre WetterScreen-Klasse
 // Fügen Sie weitere Imports für Ihre anderen Screens hinzu
 
 void main() async {
@@ -31,17 +31,19 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: IntroScreen(), // Starten Sie mit dem IntroScreen
+      home: const IntroScreen(), // Starten Sie mit dem IntroScreen
     );
   }
 }
 
 class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
   @override
-  _MainScreenState createState() => _MainScreenState();
+  MainScreenState createState() => MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _children = [

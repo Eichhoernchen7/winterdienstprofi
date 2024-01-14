@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:winterdienst_profi/loginScreen.dart';
-import 'main.dart'; // Importieren Sie hier Ihre Hauptbildschirm-Datei
+import 'package:winterdienst_profi/login/loginScreen.dart';
+
 
 class IntroScreen extends StatefulWidget {
   const IntroScreen({super.key});
 
   @override
-  _IntroScreenState createState() => _IntroScreenState();
+  IntroScreenState createState() => IntroScreenState();
 }
 
-class _IntroScreenState extends State<IntroScreen> {
+class IntroScreenState extends State<IntroScreen> {
   @override
   void initState() {
     super.initState();
@@ -27,8 +27,8 @@ class _IntroScreenState extends State<IntroScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset('assets/images/winterdienstprofi.png'), // Ihr Logo
-            SizedBox(height: 20), // Abstand zwischen Logo und Text
-            Text(
+            const SizedBox(height: 20), // Abstand zwischen Logo und Text
+            const Text(
               'Winterdienst-Profi',
               style: TextStyle(
                 fontSize: 24, // Anpassen nach Bedarf
