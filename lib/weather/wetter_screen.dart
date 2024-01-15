@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
 import 'package:intl/intl.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class WetterScreen extends StatefulWidget {
   const WetterScreen({super.key});
@@ -107,7 +107,7 @@ class WetterScreenState extends State<WetterScreen> {
   }
 
   Widget _buildWarningCard(dynamic warning) {
-    final dateFormat = DateFormat('yyyy-MM-dd HH:mm');
+    final dateFormat = DateFormat('dd-MM-yyyy HH:mm');
     final effectiveDate = DateTime.parse(warning['effective']);
     final expiresDate = DateTime.parse(warning['expires']);
     return Card(
@@ -118,12 +118,27 @@ class WetterScreenState extends State<WetterScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Gültig von: ${dateFormat.format(effectiveDate)}',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            Text('Bis: ${dateFormat.format(expiresDate)}',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 8),
-            Text(warning['description_de'] ?? 'Keine Beschreibung verfügbar'),
+            Text(
+              'Gültig von: ${dateFormat.format(effectiveDate)}',
+              style: GoogleFonts.lato(
+                textStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Text(
+              'Bis: ${dateFormat.format(expiresDate)}',
+              style: GoogleFonts.lato(
+                textStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              warning['description_de'] ?? 'Keine Beschreibung verfügbar',
+              style: GoogleFonts.lato(),
+            ),
           ],
         ),
       ),
@@ -152,27 +167,6 @@ class WetterScreenState extends State<WetterScreen> {
     );
   }
 
-  Widget buildLineChart() {
-    return LineChart(
-      LineChartData(
-        gridData: FlGridData(show: false),
-        titlesData: FlTitlesData(show: false),
-        borderData: FlBorderData(show: false),
-        lineBarsData: [
-          LineChartBarData(
-            spots: [
-              // Hier fügen Sie Ihre Daten ein
-              FlSpot(0, 3),
-              // Beispielspot: x-Achse ist die Zeit, y-Achse ist der Wert
-              FlSpot(1, 1.5),
-              // ... Weitere Spots für Wind, Regen, Temperatur
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -191,13 +185,6 @@ class WetterScreenState extends State<WetterScreen> {
                   return _buildWeatherCard(wetterVorhersage[index]);
                 },
               ),
-            ),
-
-            // Platzhalter für das Diagramm
-            SizedBox(
-              height: 200,
-              // Ändern Sie die Höhe entsprechend Ihren Bedürfnissen
-              child: buildLineChart(), // Hier rufen Sie Ihr Diagramm-Widget auf
             ),
 
             // Liste der Wetterwarnungen

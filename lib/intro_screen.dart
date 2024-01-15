@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:winterdienst_profi/login/loginScreen.dart';
+import 'package:winterdienst_profi/login/login_screen.dart';
 
 
 class IntroScreen extends StatefulWidget {
