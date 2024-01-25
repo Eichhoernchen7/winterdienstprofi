@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:winterdienst_profi/maps/karten_screen.dart';
+import 'package:winterdienst_profi/main.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -20,7 +20,7 @@ class RegisterScreenState extends State<RegisterScreen> {
   final _firmennameController = TextEditingController();
   final _leitungController = TextEditingController();
   final _mobilnummerController = TextEditingController();
-  String _selectedRole = 'Fahrer'; // todo liste entwickeln
+  String _selectedRole = 'Fahrer';
 
   String _emailValidationMessage = '';
   String _passwordLengthMessage = '';
@@ -91,23 +91,20 @@ class RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _saveUserDataToFirestore() async {
-    String userId = FirebaseAuth.instance.currentUser!.uid;
-    CollectionReference users = FirebaseFirestore.instance.collection('benutzer');
-
-    await users.doc(userId).set({
-      'email': _emailController.text,
-      'rolle': _selectedRole,
-      // Weitere Benutzerdaten hier hinzufügen
-    });
+    String? useremail = _auth.currentUser?.email.toString();
+    CollectionReference users = FirebaseFirestore.instance.collection(_firmennameController.toString());
 
     if (_selectedRole == 'Firma') {
-      CollectionReference firmen = FirebaseFirestore.instance.collection(_firmennameController.text);
-      await firmen.doc(userId).set({
+      await users.doc().set({
         'email': _emailController.text,
         'leitung': _leitungController.text,
         'mobilnummer': _mobilnummerController.text,
-        'rolle': ['Firma', 'Fahrer', 'Kunde'] // Rollenliste anpassen
+        'rolle': 'Firma'
       });
+    }
+
+    if(_selectedRole == 'Fahrer'){
+      //todo hier muss die firma gefunden werden
     }
   }
 
@@ -148,7 +145,7 @@ class RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _navigateToCardScreen() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const KartenScreen()));
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MainScreen()));
   }
 
 
