@@ -20,6 +20,9 @@ class RegisterScreenState extends State<RegisterScreen> {
   final _firmennameController = TextEditingController();
   final _leitungController = TextEditingController();
   final _mobilnummerController = TextEditingController();
+  // Hinzufügen einer Variablen für die Hintergrundfarbe des Firmennamen-Textfelds
+  Color _firmennameBackgroundColor = Colors.white;
+  bool _isFirmennameValid = false;
   String _selectedRole = 'Fahrer';
 
   String _emailValidationMessage = '';
@@ -28,6 +31,39 @@ class RegisterScreenState extends State<RegisterScreen> {
   String _passwordSpecialCharMessage = '';
   String _passwordUppercaseMessage = '';
   String _confirmPasswordValidationMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialisieren Sie die Überprüfung des Firmennamens
+    _firmennameController.addListener(_checkFirmenname);
+  }
+
+  void _checkFirmenname() async {
+    if (_selectedRole != 'Fahrer') {
+      setState(() {
+        _firmennameBackgroundColor = Colors.blue;
+        _isFirmennameValid = true; // Setzen Sie dies auf true, da die Validierung für andere Rollen nicht relevant ist
+      });
+      return;
+    }
+
+    String firmenname = _firmennameController.text;
+    var collection = FirebaseFirestore.instance.collection(firmenname);
+    var docSnapshot = await collection.limit(1).get();
+    if (docSnapshot.docs.isEmpty) {
+      setState(() {
+        _firmennameBackgroundColor = Colors.red;
+        _isFirmennameValid = false;
+      });
+    } else {
+      setState(() {
+        _firmennameBackgroundColor = Colors.green;
+        _isFirmennameValid = true;
+      });
+    }
+  }
+
 
   void _updateEmailValidation() {
     final email = _emailController.text;
@@ -47,7 +83,7 @@ class RegisterScreenState extends State<RegisterScreen> {
     setState(() {
       _passwordLengthMessage = password.length >= 7 ? '' : 'Mindestens 7 Zeichen';
       _passwordNumberMessage = password.contains(RegExp(r'[0-9]')) ? '' : 'Mindestens eine Zahl';
-      _passwordSpecialCharMessage = password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]')) ? '' : 'Mindestens ein Sonderzeichen';
+      _passwordSpecialCharMessage = password.contains(RegExp(r'[!@+#$%^&*(),.?":{}|<>]')) ? '' : 'Mindestens ein Sonderzeichen';
       _passwordUppercaseMessage = password.contains(RegExp(r'[A-Z]')) ? '' : 'Mindestens ein Großbuchstabe';
     });
   }
@@ -62,25 +98,20 @@ class RegisterScreenState extends State<RegisterScreen> {
 
   void _register() async {
     _updateEmailValidation();
+    // Überprüfen Sie alle Validierungsbedingungen einschließlich der Firmennamen-Validierung
     if (_emailValidationMessage.isNotEmpty ||
         _passwordLengthMessage.isNotEmpty ||
         _passwordNumberMessage.isNotEmpty ||
         _passwordSpecialCharMessage.isNotEmpty ||
         _passwordUppercaseMessage.isNotEmpty ||
-        _confirmPasswordValidationMessage.isNotEmpty) {
+        _confirmPasswordValidationMessage.isNotEmpty ||
+        !_isFirmennameValid) {
+      _showFirmaNotFoundSnackBar();
       // Zeige Fehlermeldungen oder handle den Fehler
       return;
-
     }
 
     final registrationSuccess = await _attemptRegistration();
-    if (registrationSuccess) {
-      _showRegistrationSuccess();
-      _navigateToCardScreen();
-    } else {
-      _showRegistrationError();
-    }
-
     if (registrationSuccess) {
       await _saveUserDataToFirestore();
       _showRegistrationSuccess();
@@ -88,25 +119,53 @@ class RegisterScreenState extends State<RegisterScreen> {
     } else {
       _showRegistrationError();
     }
+
   }
 
   Future<void> _saveUserDataToFirestore() async {
-    String? useremail = _auth.currentUser?.email.toString();
-    CollectionReference users = FirebaseFirestore.instance.collection(_firmennameController.toString());
+    CollectionReference companyCollection = FirebaseFirestore.instance.collection(_firmennameController.text.trim());
 
     if (_selectedRole == 'Firma') {
-      await users.doc().set({
+      await companyCollection.doc().set({
         'email': _emailController.text,
         'leitung': _leitungController.text,
         'mobilnummer': _mobilnummerController.text,
         'rolle': 'Firma'
       });
-    }
+    } else if (_selectedRole == 'Fahrer') {
+      // Holt das erste Dokument der Firma.
+      var querySnapshot = await companyCollection.limit(1).get();
+      if (querySnapshot.docs.isNotEmpty) {
+        // Nimmt die ID des ersten Dokuments.
+        var firmenDocumentId = querySnapshot.docs.first.id;
 
-    if(_selectedRole == 'Fahrer'){
-      //todo hier muss die firma gefunden werden
+        // Zugriff auf die Sub-Collection 'Fahrer'.
+        CollectionReference driversCollection = companyCollection.doc(firmenDocumentId).collection('Fahrer');
+
+        // Daten des Fahrers in der Sub-Collection speichern.
+        await driversCollection.add({
+          'email': _emailController.text,
+          'leitung': _leitungController.text,
+          'mobilnummer': _mobilnummerController.text,
+          'rolle': 'Fahrer'
+        });
+      } else {
+        // Zeigt eine Snackbar an, wenn keine Firma gefunden wurde
+        _showFirmaNotFoundSnackBar();
+      }
     }
   }
+
+  void _showFirmaNotFoundSnackBar() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Firma nicht gefunden. Fragen Sie Ihren Ansprechpartner nach dem korrekten Firmennamen. Achten Sie auf Groß- und Kleinschreibung.'),
+        duration: Duration(seconds: 5),
+      ),
+    );
+  }
+
+
 
   Future<bool> _attemptRegistration() async {
     try {
@@ -216,17 +275,19 @@ class RegisterScreenState extends State<RegisterScreen> {
                   // Zusätzliche Felder für Firmeninformationen
                   TextField(
                     controller: _firmennameController,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Firmenname',
-                      border: OutlineInputBorder(),
+                      border: const OutlineInputBorder(),
+                      fillColor: _firmennameBackgroundColor,
+                      filled: true,
                     ),
                   ),
                   const SizedBox(height: 10),
                   TextField(
                     controller: _leitungController,
-                    decoration: const InputDecoration(
-                      labelText: 'Leitung',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: _selectedRole == 'Fahrer' ? 'Dienstleistername' : 'Leitung',
+                      border: const OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -245,6 +306,8 @@ class RegisterScreenState extends State<RegisterScreen> {
                     onChanged: (String? newValue) {
                       setState(() {
                         _selectedRole = newValue!;
+                        // Trigger the firm name check when the role changes
+                        _checkFirmenname();
                       });
                     },
                     items: <String>['Firma', 'Fahrer', 'Kunde']
@@ -271,6 +334,13 @@ class RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _firmennameController.removeListener(_checkFirmenname);
+    // Dispose andere Controller
+    super.dispose();
   }
 
 
