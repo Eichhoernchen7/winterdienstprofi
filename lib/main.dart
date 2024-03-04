@@ -47,10 +47,10 @@ class MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _children = [
-    KartenScreen(),
-    Text('Liste'), // Ersetzen Sie dies durch Ihren Listen-Screen
-    WetterScreen(),
-    Text('Chat'), // Ersetzen Sie dies durch Ihren Chat-Screen
+    const KartenScreen(),
+    const Text('Liste'), // Ersetzen Sie dies durch Ihren Listen-Screen
+    const WetterScreen(),
+    const Text('Chat'), // Ersetzen Sie dies durch Ihren Chat-Screen
   ];
 
   void onTabTapped(int index) {
@@ -69,8 +69,8 @@ class MainScreenState extends State<MainScreen> {
       bottomNavigationBar: Container(
         color: Colors.black, // Schwarzer Hintergrund für den äußeren Container
         child: Container(
-          margin: EdgeInsets.only(top: 10), // Abstand nur im inneren Container
-          decoration: BoxDecoration(
+          margin: const EdgeInsets.only(top: 10), // Abstand nur im inneren Container
+          decoration: const BoxDecoration(
             color: Colors.black,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20),
@@ -80,7 +80,7 @@ class MainScreenState extends State<MainScreen> {
             ),
           ),
           child: ClipRRect(
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
               bottomLeft: Radius.circular(20),
